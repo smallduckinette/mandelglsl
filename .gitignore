@@ -27,3 +27,7 @@
 *.exe
 *.out
 *.app
+mandelbrot
+
+#depends
+*.depends
