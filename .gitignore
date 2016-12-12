@@ -29,5 +29,8 @@
 *.app
 mandelbrot
 
-#depends
+# Depends
 *.depends
+
+# Emacs files
+*~

@@ -7,62 +7,7 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
-const char * vertexShaderSource =
-  "attribute vec4 Position;\n"
-  "attribute vec4 SourceColor;\n"
-  " \n"
-  "varying vec2 c;\n"
-  " \n"
-  "void main(void) {\n"
-  "    gl_Position = Position;\n"
-  "    c = gl_Position.xy;\n"
-  "}\n";
-
-const char * fragmentShaderSource =
-  "varying vec2 c; \n"
-  "\n"
-  "vec2 c_mult(vec2 a, vec2 b) {\n"
-  "  return vec2(a.x * b.x - a.y * b.y,\n"
-  "              (a.x+a.y)*(b.x+b.y) - a.x*b.x - a.y*b.y);\n"
-  "}  \n"
-  "float mandel(int depth, vec2 c) {\n"
-  "  return 1.0;\n"
-  "}  \n"
-  "void main(void) {\n"
-  "    gl_FragColor = mandel(100, c) * vec4(1.0, 1.0, 1.0, 1.0);\n"
-  "}\n";
-
-void printCompileStatus(GLuint shader)
-{
-  GLint blen = 0;	
-  GLsizei slen = 0;
-  
-  glGetShaderiv(shader, GL_INFO_LOG_LENGTH , &blen);       
-  
-  if (blen > 1)
-  {
-    std::vector<GLchar> compilerLog(blen);
-    
-    glGetInfoLogARB(shader, blen, &slen, &compilerLog[0]);
-    std::cout << "compiler_log:" << &compilerLog[0] << std::endl;
-  }
-}
-
-void printLinkStatus(GLuint shader)
-{
-  GLint blen = 0;	
-  GLsizei slen = 0;
-  
-  glGetProgramiv(shader, GL_INFO_LOG_LENGTH , &blen);       
-  
-  if (blen > 1)
-  {
-    std::vector<GLchar> compilerLog(blen);
-    
-    glGetInfoLogARB(shader, blen, &slen, &compilerLog[0]);
-    std::cout << "linker_log:" << &compilerLog[0] << std::endl;
-  }
-}
+#include "program.h"
 
 int main()
 {
@@ -87,34 +32,15 @@ int main()
     SDL_GL_SetSwapInterval(1);
 
     glewInit();
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     
-    std::ifstream frag("frag.txt");
-    std::string fragSource((std::istreambuf_iterator<char>(frag)), std::istreambuf_iterator<char>());
-    const char * fragSourcePtr = fragSource.c_str();
+    std::ifstream vertexSource("vertex.txt");
+    std::ifstream fragmentSource("frag.txt");
+    Program program(vertexSource, fragmentSource);
     
-    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-    glShaderSource(fragmentShader, 1, &fragSourcePtr, nullptr);
+    program.use();
     
-    glCompileShader(vertexShader);
-    printCompileStatus(vertexShader);
-    
-    glCompileShader(fragmentShader);
-    printCompileStatus(fragmentShader);
-  
-    GLuint programObject = glCreateProgram();
-    glAttachShader(programObject, vertexShader);
-    glAttachShader(programObject, fragmentShader);
-    glLinkProgram(programObject);
-    printLinkStatus(programObject);
-    
-
-    glUseProgram(programObject);
-    
-    GLuint positionSlot = glGetAttribLocation(programObject, "Position");
-    GLuint colorSlot = glGetAttribLocation(programObject, "SourceColor");
+    GLuint positionSlot = program.getAttribLocation("Position");
+    GLuint colorSlot = program.getAttribLocation("SourceColor");
     glEnableVertexAttribArray(positionSlot);
     glEnableVertexAttribArray(colorSlot);
     
