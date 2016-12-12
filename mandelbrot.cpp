@@ -32,6 +32,8 @@ int main()
     SDL_GL_SetSwapInterval(1);
 
     glewInit();
+
+    glViewport(0, 0, 800, 800);
     
     std::ifstream vertexSource("vertex.txt");
     std::ifstream fragmentSource("frag.txt");
@@ -40,9 +42,7 @@ int main()
     program.use();
     
     GLuint positionSlot = program.getAttribLocation("Position");
-    GLuint colorSlot = program.getAttribLocation("SourceColor");
     glEnableVertexAttribArray(positionSlot);
-    glEnableVertexAttribArray(colorSlot);
     
     GLuint color_s = program.getUniformLocation("color_s");
     GLuint color_v = program.getUniformLocation("color_v");
@@ -55,14 +55,13 @@ int main()
     
     typedef struct {
       float Position[3];
-      float Color[4];
     } Vertex;
     
     const Vertex vertices[] = {
-      {{1, -1, 0}, {1, 0, 0, 1}},
-      {{1, 1, 0}, {0, 1, 0, 1}},
-      {{-1, 1, 0}, {0, 0, 1, 1}},
-      {{-1, -1, 0}, {0, 0, 0, 1}}
+      {{1, -1, 0}},
+      {{1, 1, 0}},
+      {{-1, 1, 0}},
+      {{-1, -1, 0}}
     };
     
     const GLubyte indices[] = {
@@ -78,7 +77,9 @@ int main()
     GLuint indexBuffer;
     glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);    
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     
     bool done = false;
     unsigned int lastTime = SDL_GetTicks();
@@ -127,12 +128,6 @@ int main()
         continue;
       
       // Draw the frame
-      glClearColor(1., 0., 1., 1.);
-      glClear(GL_COLOR_BUFFER_BIT);
-      glViewport(0, 0, 800, 800);
-      glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-      glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) (sizeof(float) * 3));
-      
       glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_BYTE, 0);
       
       SDL_GL_SwapWindow(window);
