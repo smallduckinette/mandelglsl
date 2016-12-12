@@ -14,6 +14,7 @@ public:
   
   void use();
   GLuint getAttribLocation(const char * attribute) const;
+  GLuint getUniformLocation(const char * attribute) const;
   
 private:
   void loadShader(GLuint shader, std::istream & stream) const;

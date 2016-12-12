@@ -1,4 +1,6 @@
 varying vec2 c;
+uniform float color_s;
+uniform float color_v;
 
 vec3 hsv2rgb(vec3 c)
 {
@@ -21,5 +23,5 @@ void main() {
         z.y = y;
     }
 
-    gl_FragColor = vec4(hsv2rgb(vec3(i / 100., 0.8, 0.8)), 1.0);
+    gl_FragColor = vec4(hsv2rgb(vec3(i / 100., color_s, color_v)), 1.0);
 }

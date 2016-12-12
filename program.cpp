@@ -27,6 +27,11 @@ GLuint Program::getAttribLocation(const char * attribute) const
   return glGetAttribLocation(_program.get(), attribute);
 }
 
+GLuint Program::getUniformLocation(const char * attribute) const
+{
+  return glGetUniformLocation(_program.get(), attribute);
+}
+
 void Program::loadShader(GLuint shader, std::istream & stream) const
 {
   std::string source((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());

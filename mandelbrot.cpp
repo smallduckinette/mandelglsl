@@ -44,6 +44,15 @@ int main()
     glEnableVertexAttribArray(positionSlot);
     glEnableVertexAttribArray(colorSlot);
     
+    GLuint color_s = program.getUniformLocation("color_s");
+    GLuint color_v = program.getUniformLocation("color_v");
+    
+    float cs = 0.8;
+    float cv = 0.8;
+    
+    glUniform1f(color_s, cs);
+    glUniform1f(color_v, cv);
+    
     typedef struct {
       float Position[3];
       float Color[4];
@@ -82,6 +91,35 @@ int main()
         {
         case SDL_QUIT:
           done = true;
+          break;
+        case SDL_KEYDOWN:
+          if(event.key.keysym.sym == SDLK_s)
+          {
+            if(event.key.keysym.mod & KMOD_SHIFT)
+            {
+              cs -= 0.05;
+            }
+            else
+            {
+              cs += 0.05;
+            }
+            cs = std::max(std::min(cs, 1.0f), 0.0f);
+            glUniform1f(color_s, cs);
+          }
+          else if(event.key.keysym.sym == SDLK_v)
+          {
+            if(event.key.keysym.mod & KMOD_SHIFT)
+            {
+              cv -= 0.05;
+            }
+            else
+            {
+              cv += 0.05;
+            }
+            cv = std::max(std::min(cv, 1.0f), 0.0f);
+            glUniform1f(color_v, cv);
+          }
+          break;
         }
       }
       
