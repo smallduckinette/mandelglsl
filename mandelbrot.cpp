@@ -46,12 +46,19 @@ int main()
     
     GLuint color_s = program.getUniformLocation("color_s");
     GLuint color_v = program.getUniformLocation("color_v");
+    GLuint v_zoom = program.getUniformLocation("zoom");
+    GLuint v_pos = program.getUniformLocation("position");
     
     float cs = 0.8;
     float cv = 0.8;
+    float zoom = 1.0;
+    float posx = 0.25;
+    float posy = 0.0;
     
     glUniform1f(color_s, cs);
     glUniform1f(color_v, cv);
+    glUniform1f(v_zoom, zoom);
+    glUniform2f(v_pos, posx, posy);
     
     typedef struct {
       float Position[3];
@@ -82,7 +89,6 @@ int main()
     glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
     
     bool done = false;
-    unsigned int lastTime = SDL_GetTicks();
     while(!done)
     {
       SDL_Event event;
@@ -121,6 +127,25 @@ int main()
             glUniform1f(color_v, cv);
           }
           break;
+        case SDL_MOUSEWHEEL:
+          {
+            if(event.wheel.y < 0)
+              zoom *= 1.5f;
+            else
+              zoom /= 1.5f;
+            glUniform1f(v_zoom, zoom);
+            break;
+          }
+        case SDL_MOUSEMOTION:
+          {
+            if(event.motion.state & SDL_BUTTON_LMASK)
+            {
+              posx -= (event.motion.xrel * zoom / 400.0f);
+              posy += (event.motion.yrel * zoom / 400.0f);
+              glUniform2f(v_pos, posx, posy);
+            }
+            break;
+          }
         }
       }
       
@@ -128,12 +153,11 @@ int main()
         continue;
       
       // Draw the frame
+      unsigned int t1 = SDL_GetTicks();
       glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_BYTE, 0);
-      
       SDL_GL_SwapWindow(window);
-      unsigned int currentTime = SDL_GetTicks();
-      std::cout << (currentTime - lastTime) << std::endl;
-      lastTime = currentTime;
+      unsigned int t2 = SDL_GetTicks();
+      std::cout << (t2 - t1) << std::endl;
     }
   }
   catch(const std::exception & e)
