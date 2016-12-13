@@ -19,11 +19,14 @@ void main() {
     for(i=0; i<1000; i++) {
         float x = (z.x * z.x - z.y * z.y) + local_c.x;
         float y = (z.y * z.x + z.x * z.y) + local_c.y;
-
-        if((x * x + y * y) > 4.0) break;
         z.x = x;
         z.y = y;
+        if((x * x + y * y) > 4.0) break;
     }
 
-    gl_FragColor = vec4(hsv2rgb(vec3(i / 50., color_s, color_v)), 1.0);
+    float log_zn = log( z.x*z.x + z.y*z.y ) / 2;
+    float nu = log( log_zn / log(2) ) / log(2);
+    float v = i + 1 - nu;
+
+    gl_FragColor = vec4(hsv2rgb(vec3(v / 50., color_s, color_v)), 1.0);
 }
