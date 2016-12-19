@@ -32,7 +32,20 @@ inline void doDeleteProgram(GLuint ref)
   glDeleteProgram(ref);
 }
 
+inline void doDeleteBuffer(GLuint ref)
+{
+  glDeleteBuffers(1, &ref);
+}
+
 typedef std::unique_ptr<GLuint, CustomDeleter<doDeleteShader> > ShaderRef;
 typedef std::unique_ptr<GLuint, CustomDeleter<doDeleteProgram> > ProgramRef;
+typedef std::unique_ptr<GLuint, CustomDeleter<doDeleteBuffer> > BufferRef;
+
+inline GLuint createBuffer()
+{
+  GLuint ref;
+  glGenBuffers(1, &ref);
+  return ref;
+}
 
 #endif
