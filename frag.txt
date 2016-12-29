@@ -3,6 +3,7 @@ uniform float color_s;
 uniform float color_v;
 uniform float zoom;
 uniform vec2 position;
+uniform float stretch;
 
 vec3 hsv2rgb(vec3 c)
 {
@@ -12,7 +13,7 @@ vec3 hsv2rgb(vec3 c)
 }
 
 void main() {
-    vec2 local_c = c * zoom + position;
+    vec2 local_c = (c * zoom + position) * vec2(stretch, 1);
     vec2 z = local_c;
 
     int i;
@@ -24,9 +25,16 @@ void main() {
         if((x * x + y * y) > 4.0) break;
     }
 
-    float log_zn = log( z.x*z.x + z.y*z.y ) / 2;
-    float nu = log( log_zn / log(2) ) / log(2);
-    float v = i + 1 - nu;
-
-    gl_FragColor = vec4(hsv2rgb(vec3(v / 50., color_s, color_v)), 1.0);
+    if(i == 1000)
+    {
+          gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);  
+    }   
+    else
+    {
+          float log_zn = log( z.x*z.x + z.y*z.y ) / 2;
+          float nu = log( log_zn / log(2) ) / log(2);
+          float v = i + 1 - nu;
+        
+          gl_FragColor = vec4(hsv2rgb(vec3(v / 50., color_s, color_v)), 1.0);
+    }
 }

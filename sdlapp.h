@@ -21,6 +21,8 @@ public:
   
 protected:
   SDL_WindowRef _window;
+  int _w;
+  int _h;
 };
 
 #endif

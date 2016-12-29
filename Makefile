@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -ggdb -std=c++17 -W -Wall -Werror 
+CXXFLAGS = -ggdb -O3 -std=c++17 -W -Wall -Werror 
 LDFLAGS  = -lGL -lGLEW -lSDL2
 
 TARGET = mandelbrot

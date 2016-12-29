@@ -26,7 +26,7 @@ MandelbrotApp::MandelbrotApp():
   glewInit();
 
   // Create the viewport
-  glViewport(0, 0, 800, 800);
+  glViewport(0, 0, _w, _h);
 
   // Load the shader
   std::ifstream vertexSource("vertex.txt");
@@ -46,8 +46,13 @@ MandelbrotApp::MandelbrotApp():
   glUniform1f(_v_v, _cv);
   glUniform1f(_v_zoom, _zoom);
   glUniform2f(_v_pos, _posx, _posy);
+  
+  // Stretch factor
+  float stretchFactor = (float)_w / (float)_h;
+  GLuint v_stretch = _program->getUniformLocation("stretch");
+  glUniform1f(v_stretch, stretchFactor);
 
-  // Load the geometry    
+  // Load the geometry
   std::vector<Vertex> vertices({
       {{1, -1, 0}},
       {{1, 1, 0}},
@@ -110,8 +115,8 @@ void MandelbrotApp::onMouseMotion(const SDL_MouseMotionEvent & motion)
 {
   if(motion.state & SDL_BUTTON_LMASK)
   {
-    _posx -= (motion.xrel * _zoom / 400.0f);
-    _posy += (motion.yrel * _zoom / 400.0f);
+    _posx -= (motion.xrel * _zoom / (_w / 2.0f));
+    _posy += (motion.yrel * _zoom / (_h / 2.0f));
     glUniform2f(_v_pos, _posx, _posy);
   }
 }
